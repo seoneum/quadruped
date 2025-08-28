@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+
+# ROS 2 build artifacts
+build/
+install/
+log/
+.colcon*/
+
+# Python packaging
+*.egg-info/
+.venv/
+.uv/
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

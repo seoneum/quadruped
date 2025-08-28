@@ -7,6 +7,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from mjx_env import MJXEnvCfg, MJXParallelEnv
+from utils import Normalizer, Saver
 
 @dataclass
 class ARSCfg:
@@ -18,12 +19,15 @@ class ARSCfg:
     top_b: int = 16
 
 
-def rollout(env: MJXParallelEnv, key, theta, horizon):
+def rollout(env: MJXParallelEnv, key, theta, horizon, normalizer: Normalizer | None = None):
     key, k = jax.random.split(key)
     d = env.reset(k)
     def body(carry, t):
         d, rew, key = carry
-        obs = env.obs(d)
+        obs = env.obs(d); obs_np = np.asarray(obs);
+        if normalizer is not None:
+            normalizer.update_batch(obs_np); obs_np = normalizer.normalize(obs_np)
+        obs = jnp.asarray(obs_np)
         # normalize observations (running mean/std can be added)
         act = obs @ theta
         d2, r, done = env.step(d, act, torque_limit=2.3)
@@ -34,6 +38,8 @@ def rollout(env: MJXParallelEnv, key, theta, horizon):
 
 def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
     env = MJXParallelEnv(MJXEnvCfg(mjcf_path=mjcf_path, actuator_names=actuator_names, horizon=cfg.horizon), num_envs=cfg.n_envs)
+    normalizer = Normalizer(env.mx_m.nq + env.mx_m.nv)
+    saver = Saver()
     key = jax.random.PRNGKey(0)
     obs_dim = env.mx_m.nq + env.mx_m.nv
     act_dim = len(actuator_names)
@@ -45,7 +51,7 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
         deltas = jax.random.normal(k_dirs, (cfg.n_directions, obs_dim, act_dim))
         def eval_dir(delta, plus):
             th = theta + (cfg.noise_std * delta if plus else -cfg.noise_std * delta)
-            return rollout(env, k_roll, th, cfg.horizon)
+            return rollout(env, k_roll, th, cfg.horizon, normalizer)
         rets_plus = jax.vmap(lambda d: eval_dir(d, True))(deltas)
         rets_minus = jax.vmap(lambda d: eval_dir(d, False))(deltas)
         # select top directions
@@ -56,11 +62,12 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
         for i in idx:
             step = step + (rets_plus[i] - rets_minus[i]) * deltas[i]
         theta = theta + cfg.step_size / (cfg.top_b * std) * step
-        ret = rollout(env, k_roll, theta, cfg.horizon)
+        ret = rollout(env, k_roll, theta, cfg.horizon, normalizer)
         best = max(best, float(ret))
         print(f"Iter {it}: ret={float(ret):.3f} best={best:.3f}")
         if it % 10 == 0:
-            print('checkpoint theta norm', float(jnp.linalg.norm(theta)))
+            path = saver.save(it, np.asarray(theta), {'cfg': cfg.__dict__})
+            print('checkpoint', path, 'theta_norm', float(jnp.linalg.norm(theta)))
 
 if __name__ == '__main__':
     # Example using the simple quadruped.xml with 8 actuators

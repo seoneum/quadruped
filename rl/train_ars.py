@@ -24,8 +24,9 @@ def rollout(env: MJXParallelEnv, key, theta, horizon):
     def body(carry, t):
         d, rew, key = carry
         obs = env.obs(d)
-        act = obs @ theta  # linear policy; scale to actuator dims
-        d2, r, done = env.step(d, act)
+        # normalize observations (running mean/std can be added)
+        act = obs @ theta
+        d2, r, done = env.step(d, act, torque_limit=2.3)
         return (d2, rew + r, key), None
     (d, ret, _), _ = jax.lax.scan(body, (d, jnp.zeros((env.num_envs,)), key), None, length=horizon)
     return ret.mean()

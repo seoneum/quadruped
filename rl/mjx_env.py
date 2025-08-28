@@ -85,14 +85,13 @@ class MJXParallelEnv:
         qvel = d.qvel[:, :]
         return jnp.concatenate([qpos, qvel], axis=-1)
 
-    def step(self, d, action: jax.Array):
+    def step(self, d, action: jax.Array, torque_limit: float = 2.3):
         # action expected shape: (num_envs, n_act)
-        # clip to [-1,1] then scale if needed outside
-        ctrl = jnp.clip(action, -1.0, 1.0)
+        # scale to actuator torque limits (N·m)
+        ctrl = jnp.clip(action, -1.0, 1.0) * torque_limit
         d2 = self.step_fn(d, ctrl)
-        # simple reward: forward x-velocity of torso body 0, minus ctrl cost
-        # mjx stores cvel; we use base COM vel if available
+        # simple reward: forward x-velocity of base, minus torque^2 cost
         velx = d2.qvel[:, 0]
-        reward = velx - 0.001 * jnp.sum(ctrl**2, axis=-1)
+        reward = velx - 0.001 * jnp.sum((ctrl/torque_limit)**2, axis=-1)
         done = jnp.zeros((ctrl.shape[0],), dtype=bool)
         return d2, reward, done

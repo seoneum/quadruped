@@ -3,21 +3,21 @@ name = "open-quadruped-ros2-mjx"
 version = "0.1.0"
 description = "ROS 2 + MuJoCo/MJX port of OpenQuadruped"
 authors = [ { name = "OpenQuadruped Maintainer", email = "you@example.com" } ]
-requires-python = ">=3.10"
+requires-python = ">=3.11.13"
 dependencies = [
+  # 기존 의존성
   "rclpy>=2.0.0; sys_platform == 'linux'",
   "sensor-msgs; sys_platform == 'linux'",
+  # 여기에 모든 패키지를 추가
+  "mujoco",
+  "mujoco-mjx",
+  "jax",
+  "jaxlib",
+  "numpy",
 ]
 
 [tool.uv]
 managed = true
 
 [tool.uv.sources]
-# ROS 2 python deps should be provided by apt/ros; keep minimal
-
-[tool.uv.dependencies]
-"mujoco" = "*"
-"mujoco-mjx" = "*"
-"jax" = "*"
-"jaxlib" = "*"
-"numpy" = "*"
+# 이 섹션은 비워두거나 삭제해도 됩니다.

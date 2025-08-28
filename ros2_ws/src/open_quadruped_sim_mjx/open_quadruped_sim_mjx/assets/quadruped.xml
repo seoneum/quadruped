@@ -3,11 +3,11 @@
 <mujoco model="quadruped">
   <compiler angle="radian" inertiafromgeom="true"/>
   <default>
-    <joint armature=".1" damping="0.15" limited="true" type="hinge" stiffness="5.0"/>
+    <joint armature=".1" damping="0.35" limited="true" type="hinge" stiffness="5.0"/>
     <geom conaffinity="0" condim="3" contype="1" material="geom" rgba=".8 .6 .4 1" type="capsule" size="0.02" solref="0.005 1" solimp="0.9 0.95 0.001"/>
-    <position ctrllimited="true" kp="120"/>
+    <position ctrllimited="true" kp="140" forcelimited="true" forcerange="-3.0 3.0"/>
   </default>
-  <option integrator="Euler" timestep="0.002" gravity="0 0 -9.81"/>
+  <option integrator="RK4" timestep="0.002" gravity="0 0 -9.81"/>
   <visual><map znear="0.02"/></visual>
   <asset>
     <texture builtin="gradient" height="100" rgb1="1 1 1" rgb2="0 0 0" type="skybox" width="100"/>

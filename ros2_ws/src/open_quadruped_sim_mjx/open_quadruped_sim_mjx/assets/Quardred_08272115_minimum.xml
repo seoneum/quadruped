@@ -1,5 +1,5 @@
 <mujoco model="Quardred_08281545_noro">
-    <compiler angle="radian" />
+    <compiler angle="radian" meshdir="meshes" />
     <asset>
         <mesh name="Bridge_1" file="meshes/Bridge_1.stl" scale="1 1 1" />
         <mesh name="Belt" file="meshes/Belt.stl" scale="1 1 1" />

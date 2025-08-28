@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>open_quadruped_nav</name>
+  <version>0.1.0</version>
+  <description>Navigation/SLAM launch files for OpenQuadruped</description>
+  <maintainer email="you@example.com">OpenQuadruped Maintainer</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rtabmap_ros</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>pointcloud_to_laserscan</exec_depend>
+</package>

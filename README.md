@@ -33,3 +33,10 @@ Note: ROS 2 Python packages (rclpy, sensor_msgs) are provided by your ROS 2 inst
 - Provide/convert an MJCF for the quadruped and map JointAngles to actuators
 - Implement gait mode using the existing gait planner
 - Add launch files
+
+
+## RL training with MJX (ARS)
+- Setup: `uv venv && uv sync`
+- Run: `python rl/train_ars.py`
+- Edit `rl/train_ars.py` to point to your MJCF and actuator names.
+- For large-scale parallelism, increase `ARSCfg.n_envs` and ensure JAX is using GPU.

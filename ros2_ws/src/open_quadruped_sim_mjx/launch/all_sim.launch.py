@@ -8,12 +8,12 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     mjcf_path = LaunchConfiguration('mjcf_path')
     cam = LaunchConfiguration('camera')
-    # Default actuator mapping for simple quadruped.xml (can be overridden)
+    # Default actuator mapping: empty by default to defer to Quardred_... naming once defined
     default_mapping = {
-        'fl': ['hip_front_left', 'knee_front_left'],
-        'fr': ['hip_front_right', 'knee_front_right'],
-        'bl': ['hip_back_left', 'knee_back_left'],
-        'br': ['hip_back_right', 'knee_back_right'],
+        'fl': [],
+        'fr': [],
+        'bl': [],
+        'br': [],
     }
     return LaunchDescription([
         DeclareLaunchArgument('mjcf_path', default_value=''),

@@ -80,10 +80,8 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
 if __name__ == '__main__':
     # Example using the simple quadruped.xml with 8 actuators
     here = os.path.dirname(__file__)
-    mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'quadruped.xml')
-    # Order should match MJCF actuator names, action in [-1,1]
-    actuators = [
-        'hip_front_left','knee_front_left','hip_front_right','knee_front_right',
-        'hip_back_left','knee_back_left','hip_back_right','knee_back_right'
-    ]
+    # Default to the large model (currently geometry-only, 0 actuators). Training will run with no control until actuators are added.
+    mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'Quardred_08272115_minimum.xml')
+    # Use the actuator names defined in the large MJCF once added. For now, keep empty to allow no-control rollouts.
+    actuators: list[str] = []
     train(mjcf, actuators, ARSCfg())

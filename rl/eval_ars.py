@@ -30,11 +30,10 @@ def eval_return(env: MJXParallelEnv, theta: jnp.ndarray, horizon: int) -> float:
 
 if __name__ == '__main__':
     here = os.path.dirname(__file__)
-    mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'quadruped.xml')
-    actuators = [
-        'hip_front_left','knee_front_left','hip_front_right','knee_front_right',
-        'hip_back_left','knee_back_left','hip_back_right','knee_back_right'
-    ]
+    # Evaluate against the large Quardred MJCF by default
+    mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'Quardred_08272115_minimum.xml')
+    # Use actuator names from Quardred_... once motors are defined; keep empty for now
+    actuators: list[str] = []
     theta_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(here, 'checkpoints', 'latest.npz')
     theta = jnp.asarray(load_theta(theta_path))
     env = MJXParallelEnv(MJXEnvCfg(mjcf_path=mjcf, actuator_names=actuators, horizon=500), num_envs=64)

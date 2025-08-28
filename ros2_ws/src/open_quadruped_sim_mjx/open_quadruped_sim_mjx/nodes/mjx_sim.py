@@ -24,10 +24,12 @@ class MJXSimNode(Node):
         self.declare_parameter('mjcf_path', '')
         self.declare_parameter('timestep', 0.002)
         self.declare_parameter('realtime', True)
+        self.declare_parameter('actuator_mapping', {})
 
         self.mjcf_path = str(self.get_parameter('mjcf_path').value)
         self.dt = float(self.get_parameter('timestep').value)
         self.realtime = bool(self.get_parameter('realtime').value)
+        self.actuator_mapping = dict(self.get_parameter('actuator_mapping').value)
 
         if mujoco is None:
             self.get_logger().warn('mujoco not available. Install with `uv add mujoco`.')
@@ -52,8 +54,20 @@ class MJXSimNode(Node):
         # Map incoming joint angles (rad) into model actuators if available.
         if self.model is None or self.data is None:
             return
-        # NOTE: Without a concrete MJCF mapping, this just logs reception.
-        self.get_logger().debug('Received JointAngles; mapping to actuators is model-specific.')
+        # Map joint arrays into actuator ctrl by name mapping if provided
+        if not self.actuator_mapping:
+            return
+        def set_by_list(names, values):
+            for n, v in zip(names, values):
+                if self.model is None:
+                    continue
+                aid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, n)
+                if aid >= 0:
+                    self.data.ctrl[aid] = float(v)
+        set_by_list(self.actuator_mapping.get('fl', []), msg.fl)
+        set_by_list(self.actuator_mapping.get('fr', []), msg.fr)
+        set_by_list(self.actuator_mapping.get('bl', []), msg.bl)
+        set_by_list(self.actuator_mapping.get('br', []), msg.br)
 
     def step(self):
         if self.model is None or self.data is None or mujoco is None:

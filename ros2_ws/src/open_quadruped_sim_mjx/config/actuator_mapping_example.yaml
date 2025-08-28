@@ -1,0 +1,7 @@
+
+# Actuator name mapping example for JointAngles msg
+# Order: fl, fr, bl, br; each with [hip, thigh, knee]
+fl: [fl_hip, fl_thigh, fl_knee]
+fr: [fr_hip, fr_thigh, fr_knee]
+bl: [bl_hip, bl_thigh, bl_knee]
+br: [br_hip, br_thigh, br_knee]

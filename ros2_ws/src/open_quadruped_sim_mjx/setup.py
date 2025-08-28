@@ -19,6 +19,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mjx_sim = open_quadruped_sim_mjx.nodes.mjx_sim:main',
+            'mujoco_camera_publisher = open_quadruped_sim_mjx.nodes.mujoco_camera_publisher:main',
         ],
     },
 )

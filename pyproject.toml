@@ -16,4 +16,8 @@ managed = true
 # ROS 2 python deps should be provided by apt/ros; keep minimal
 
 [tool.uv.dependencies]
-# Users can add with: uv add mujoco mujoco-mjx jax jaxlib
+"mujoco" = "*"
+"mujoco-mjx" = "*"
+"jax" = "*"
+"jaxlib" = "*"
+"numpy" = "*"

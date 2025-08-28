@@ -46,6 +46,11 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
     theta = jnp.zeros((obs_dim, act_dim))
 
     best = -1e9
+    import csv, os
+    log_path = os.path.join('rl','logs','training.csv')
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    # header
+    open(log_path, 'a').close()
     for it in range(1000):
         key, k_dirs, k_roll = jax.random.split(key, 3)
         deltas = jax.random.normal(k_dirs, (cfg.n_directions, obs_dim, act_dim))
@@ -65,6 +70,9 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
         ret = rollout(env, k_roll, theta, cfg.horizon, normalizer)
         best = max(best, float(ret))
         print(f"Iter {it}: ret={float(ret):.3f} best={best:.3f}")
+        with open(log_path, 'a', newline='') as f:
+            import csv
+            csv.writer(f).writerow([it, float(ret), float(best)])
         if it % 10 == 0:
             path = saver.save(it, np.asarray(theta), {'cfg': cfg.__dict__})
             print('checkpoint', path, 'theta_norm', float(jnp.linalg.norm(theta)))

@@ -66,13 +66,13 @@
     </body>
   </worldbody>
   <actuator>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="hip_front_left" name="hip_front_left"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="knee_front_left" name="knee_front_left"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="hip_front_right" name="hip_front_right"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="knee_front_right" name="knee_front_right"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="hip_back_left" name="hip_back_left"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="knee_back_left" name="knee_back_left"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="hip_back_right" name="hip_back_right"/>
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" joint="knee_back_right" name="knee_back_right"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="hip_front_left" name="hip_front_left"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="knee_front_left" name="knee_front_left"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="hip_front_right" name="hip_front_right"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="knee_front_right" name="knee_front_right"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="hip_back_left" name="hip_back_left"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="knee_back_left" name="knee_back_left"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="hip_back_right" name="hip_back_right"/>
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" forcelimited="true" forcerange="-2.3 2.3" joint="knee_back_right" name="knee_back_right"/>
   </actuator>
 </mujoco>

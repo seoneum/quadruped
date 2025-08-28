@@ -1,0 +1,19 @@
+[project]
+name = "open-quadruped-ros2-mjx"
+version = "0.1.0"
+description = "ROS 2 + MuJoCo/MJX port of OpenQuadruped"
+authors = [ { name = "OpenQuadruped Maintainer", email = "you@example.com" } ]
+requires-python = ">=3.10"
+dependencies = [
+  "rclpy>=2.0.0; sys_platform == 'linux'",
+  "sensor-msgs; sys_platform == 'linux'",
+]
+
+[tool.uv]
+managed = true
+
+[tool.uv.sources]
+# ROS 2 python deps should be provided by apt/ros; keep minimal
+
+[tool.uv.dependencies]
+# Users can add with: uv add mujoco mujoco-mjx jax jaxlib

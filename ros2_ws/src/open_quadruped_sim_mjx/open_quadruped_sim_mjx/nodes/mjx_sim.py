@@ -1,0 +1,83 @@
+import os
+import time
+from typing import Optional
+
+import rclpy
+from rclpy.node import Node
+from open_quadruped_interfaces.msg import JointAngles
+
+# Optional imports; the node will warn if mujoco/mjx aren't present
+try:
+    import mujoco
+except Exception as e:  # noqa: BLE001
+    mujoco = None
+
+try:
+    from mujoco import mjx
+except Exception as e:  # noqa: BLE001
+    mjx = None
+
+
+class MJXSimNode(Node):
+    def __init__(self):
+        super().__init__('mjx_sim')
+        self.declare_parameter('mjcf_path', '')
+        self.declare_parameter('timestep', 0.002)
+        self.declare_parameter('realtime', True)
+
+        self.mjcf_path = str(self.get_parameter('mjcf_path').value)
+        self.dt = float(self.get_parameter('timestep').value)
+        self.realtime = bool(self.get_parameter('realtime').value)
+
+        if mujoco is None:
+            self.get_logger().warn('mujoco not available. Install with `uv add mujoco`.')
+        if mjx is None:
+            self.get_logger().warn('mujoco-mjx not available. Install with `uv add mujoco-mjx jax jaxlib`.')
+
+        self.model = None
+        self.data = None
+        if mujoco is not None and self.mjcf_path and os.path.exists(self.mjcf_path):
+            try:
+                self.model = mujoco.MjModel.from_xml_path(self.mjcf_path)
+                self.data = mujoco.MjData(self.model)
+                self.get_logger().info(f'Loaded MJCF: {self.mjcf_path}')
+            except Exception as e:  # noqa: BLE001
+                self.get_logger().error(f'Failed to load MJCF: {e}')
+
+        self.sub = self.create_subscription(JointAngles, 'joint_angles', self.on_joint_angles, 10)
+        self.timer = self.create_timer(self.dt, self.step)
+        self.last_time = time.time()
+
+    def on_joint_angles(self, msg: JointAngles):
+        # Map incoming joint angles (rad) into model actuators if available.
+        if self.model is None or self.data is None:
+            return
+        # NOTE: Without a concrete MJCF mapping, this just logs reception.
+        self.get_logger().debug('Received JointAngles; mapping to actuators is model-specific.')
+
+    def step(self):
+        if self.model is None or self.data is None or mujoco is None:
+            return
+        mujoco.mj_step(self.model, self.data)
+        if self.realtime:
+            now = time.time()
+            elapsed = now - self.last_time
+            sleep_t = max(0.0, self.dt - elapsed)
+            time.sleep(sleep_t)
+            self.last_time = now + sleep_t
+
+
+def main():
+    rclpy.init()
+    node = MJXSimNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

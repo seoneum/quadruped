@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>open_quadruped_sim_mjx</name>
+  <version>0.1.0</version>
+  <description>ROS 2 node integrating MuJoCo/MJX simulation with OpenQuadruped</description>
+  <maintainer email="you@example.com">OpenQuadruped Maintainer</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <depend>rclpy</depend>
+  <depend>open_quadruped_interfaces</depend>
+</package>

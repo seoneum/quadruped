@@ -1,5 +1,42 @@
 import os
 import numpy as np
+import tarfile
+
+
+def _ensure_meshes_unpacked(mjcf_path: str, logger=None):
+    import os
+    try:
+        base = os.path.dirname(mjcf_path)
+        meshdir = os.path.join(base, 'meshes')
+        if not os.path.isdir(meshdir):
+            return
+        # quick check for any STL present
+        try:
+            has_stl = any(name.lower().endswith('.stl') for name in os.listdir(meshdir))
+        except Exception:
+            has_stl = False
+        if has_stl:
+            return
+        # find archive to unpack
+        cands = [os.path.join(meshdir, f) for f in os.listdir(meshdir) if f.endswith('.tar.gz')]
+        if not cands:
+            return
+        archive = sorted(cands)[-1]
+        if logger:
+            logger.info(f'Unpacking mesh archive: {archive}')
+        else:
+            print(f'[info] Unpacking mesh archive: {archive}')
+        with tarfile.open(archive, 'r:gz') as tf:
+            tf.extractall(meshdir)
+    except Exception as e:
+        msg = f'Failed to auto-unpack meshes: {e}'
+        if logger:
+            try:
+                logger.warn(msg)
+            except Exception:
+                logger.info(msg)
+        else:
+            print('[warn]', msg)
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
@@ -37,6 +74,8 @@ class MujocoCameraPublisher(Node):
             self.get_logger().error(f'Invalid mjcf_path: {self.mjcf_path}')
             raise SystemExit(1)
 
+        # Ensure meshes are unpacked from the bundled archive if needed
+        _ensure_meshes_unpacked(self.mjcf_path, self.get_logger())
         self.model = mujoco.MjModel.from_xml_path(self.mjcf_path)
         self.data = mujoco.MjData(self.model)
 

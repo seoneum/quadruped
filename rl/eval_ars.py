@@ -32,8 +32,13 @@ if __name__ == '__main__':
     here = os.path.dirname(__file__)
     # Evaluate against the large Quardred MJCF by default
     mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'Quardred_08272115_minimum.xml')
-    # Use actuator names from Quardred_... once motors are defined; keep empty for now
-    actuators: list[str] = []
+    # Order per leg: [hip, knee] x [fl, fr, bl, br]
+    actuators: list[str] = [
+        'act_Left_Hip_Joint','act_Lower_Leg_33',
+        'act_Right_Hip_Joint','act_Lower_Leg_134',
+        'act_Left_Hip_Joint_1','act_Lower_Leg_1',
+        'act_Right_Hip_Joint_1','act_Lower_Leg_4_1',
+    ]
     theta_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(here, 'checkpoints', 'latest.npz')
     theta = jnp.asarray(load_theta(theta_path))
     env = MJXParallelEnv(MJXEnvCfg(mjcf_path=mjcf, actuator_names=actuators, horizon=500), num_envs=64)

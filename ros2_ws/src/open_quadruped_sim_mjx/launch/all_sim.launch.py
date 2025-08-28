@@ -8,12 +8,13 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     mjcf_path = LaunchConfiguration('mjcf_path')
     cam = LaunchConfiguration('camera')
-    # Default actuator mapping: empty by default to defer to Quardred_... naming once defined
+    # Actuator mapping for Quardred_0827... (verify orientation as needed)
+    # Order per leg: [hip, knee]
     default_mapping = {
-        'fl': [],
-        'fr': [],
-        'bl': [],
-        'br': [],
+        'fl': ['act_Left_Hip_Joint', 'act_Lower_Leg_33'],
+        'fr': ['act_Right_Hip_Joint', 'act_Lower_Leg_134'],
+        'bl': ['act_Left_Hip_Joint_1', 'act_Lower_Leg_1'],
+        'br': ['act_Right_Hip_Joint_1', 'act_Lower_Leg_4_1'],
     }
     return LaunchDescription([
         DeclareLaunchArgument('mjcf_path', default_value=''),

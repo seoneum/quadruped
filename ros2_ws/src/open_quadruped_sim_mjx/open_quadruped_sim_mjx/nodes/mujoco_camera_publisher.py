@@ -16,7 +16,7 @@ class MujocoCameraPublisher(Node):
     def __init__(self):
         super().__init__('mujoco_camera_publisher')
         self.declare_parameter('mjcf_path', '')
-        self.declare_parameter('camera', 'cam0')
+        self.declare_parameter('camera', 'track')
         self.declare_parameter('width', 640)
         self.declare_parameter('height', 480)
         self.declare_parameter('frame_id', 'camera_link')

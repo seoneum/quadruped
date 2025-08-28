@@ -46,6 +46,11 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
     theta = jnp.zeros((obs_dim, act_dim))
 
     best = -1e9
+    import csv, os
+    log_path = os.path.join('rl','logs','training.csv')
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    # header
+    open(log_path, 'a').close()
     for it in range(1000):
         key, k_dirs, k_roll = jax.random.split(key, 3)
         deltas = jax.random.normal(k_dirs, (cfg.n_directions, obs_dim, act_dim))
@@ -65,6 +70,9 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
         ret = rollout(env, k_roll, theta, cfg.horizon, normalizer)
         best = max(best, float(ret))
         print(f"Iter {it}: ret={float(ret):.3f} best={best:.3f}")
+        with open(log_path, 'a', newline='') as f:
+            import csv
+            csv.writer(f).writerow([it, float(ret), float(best)])
         if it % 10 == 0:
             path = saver.save(it, np.asarray(theta), {'cfg': cfg.__dict__})
             print('checkpoint', path, 'theta_norm', float(jnp.linalg.norm(theta)))
@@ -72,10 +80,13 @@ def train(mjcf_path: str, actuator_names: list[str], cfg: ARSCfg):
 if __name__ == '__main__':
     # Example using the simple quadruped.xml with 8 actuators
     here = os.path.dirname(__file__)
-    mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'quadruped.xml')
-    # Order should match MJCF actuator names, action in [-1,1]
-    actuators = [
-        'hip_front_left','knee_front_left','hip_front_right','knee_front_right',
-        'hip_back_left','knee_back_left','hip_back_right','knee_back_right'
+    # Use Quardred model + actuator names
+    mjcf = os.path.join(here, '..', 'ros2_ws', 'src', 'open_quadruped_sim_mjx', 'open_quadruped_sim_mjx', 'assets', 'Quardred_08272115_minimum.xml')
+    # Order per leg: [hip, knee] x [fl, fr, bl, br]
+    actuators: list[str] = [
+        'act_Left_Hip_Joint','act_Lower_Leg_33',
+        'act_Right_Hip_Joint','act_Lower_Leg_134',
+        'act_Left_Hip_Joint_1','act_Lower_Leg_1',
+        'act_Right_Hip_Joint_1','act_Lower_Leg_4_1',
     ]
     train(mjcf, actuators, ARSCfg())

@@ -1,28 +1,21 @@
+
 [project]
 name = "open-quadruped-ros2-mjx"
 version = "0.1.0"
 description = "ROS 2 + MuJoCo/MJX port of OpenQuadruped"
-authors = [ { name = "OpenQuadruped Maintainer", email = "you@example.com" } ]
-<<<<<<< HEAD
-requires-python = ">=3.11.13"
+authors = [{ name = "OpenQuadruped Maintainer", email = "you@example.com" }]
+requires-python = ">=3.10"
+
+# [핵심] 모든 파이썬 의존성을 이 곳으로 옮깁니다.
+# ROS 2 관련 패키지(rclpy 등)는 apt/ROS를 통해 시스템에 설치되므로 여기에 포함하지 않습니다.
 dependencies = [
-  # 기존 의존성
-  "rclpy>=2.0.0; sys_platform == 'linux'",
-  "sensor-msgs; sys_platform == 'linux'",
-  # 여기에 모든 패키지를 추가
+  "numpy",
   "mujoco",
   "mujoco-mjx",
   "jax",
   "jaxlib",
-  "numpy",
 ]
-=======
-requires-python = ">=3.10"
-dependencies = []
->>>>>>> aec596114a2b301d490a22fa2625cc8c2469297c
 
 [tool.uv]
+# 이 섹션은 uv가 이 프로젝트를 관리한다는 표시만 남깁니다.
 managed = true
-
-[tool.uv.sources]
-# 이 섹션은 비워두거나 삭제해도 됩니다.

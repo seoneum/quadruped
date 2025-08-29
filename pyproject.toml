@@ -3,6 +3,7 @@ name = "open-quadruped-ros2-mjx"
 version = "0.1.0"
 description = "ROS 2 + MuJoCo/MJX port of OpenQuadruped"
 authors = [ { name = "OpenQuadruped Maintainer", email = "you@example.com" } ]
+<<<<<<< HEAD
 requires-python = ">=3.11.13"
 dependencies = [
   # 기존 의존성
@@ -15,6 +16,10 @@ dependencies = [
   "jaxlib",
   "numpy",
 ]
+=======
+requires-python = ">=3.10"
+dependencies = []
+>>>>>>> aec596114a2b301d490a22fa2625cc8c2469297c
 
 [tool.uv]
 managed = true
